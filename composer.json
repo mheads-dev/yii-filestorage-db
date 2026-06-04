@@ -1,0 +1,56 @@
+{
+    "name": "mheads/yii-filestorage-db",
+    "type": "library",
+    "license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "MachineHeads",
+			"homepage": "https://machineheads.ru",
+			"role": "Development company"
+		},
+		{
+			"name": "Sergey Alekseenko",
+			"email": "sergei_alekseenk@list.ru",
+			"role": "Developer"
+		}
+	],
+    "suggest": {
+        "yiisoft/db-mysql": "For MySQL database support.",
+        "yiisoft/db-pgsql": "For PostgreSQL database support.",
+        "yiisoft/db-mssql": "For MSSQL database support.",
+        "yiisoft/db-sqlite": "For SQLite database support.",
+        "yiisoft/db-oracle": "For Oracle database support.",
+        "yiisoft/db-migration": "For applying package migrations."
+    },
+    "require": {
+		"php": "8.3 - 8.5",
+        "yiisoft/db": "^2.0.1",
+        "mheads/yii-filestorage": "feature/beta2-remove-db-ar-relations"
+    },
+	"require-dev": {
+		"ext-pdo": "*",
+		"yiisoft/dummy-provider": "^1.1",
+		"yiisoft/cache": "^3.0",
+        "phpunit/phpunit": "^12.5",
+        "yiisoft/db-mysql": "^2.0",
+        "yiisoft/db-pgsql": "^2.0",
+        "yiisoft/db-mssql": "^2.0",
+        "yiisoft/db-sqlite": "^2.0",
+        "yiisoft/db-oracle": "^2.0",
+        "yiisoft/test-support": "^3.2",
+        "friendsofphp/php-cs-fixer": "^3.94",
+        "vimeo/psalm": "^6.16",
+        "httpsoft/http-message": "^1.1",
+        "yiisoft/db-migration": "^2.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Mheads\\Yii\\Filestorage\\Db\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Mheads\\Yii\\Filestorage\\Db\\Tests\\": "tests"
+		}
+	}
+}

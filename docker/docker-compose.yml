@@ -1,0 +1,142 @@
+name: mheads-yii-filestorage
+
+x-php-base: &php-base
+  build:
+    context: ./..
+    dockerfile: ./docker/Dockerfile
+  image: mheads-yii-filestorage-php-test
+  volumes:
+    - ./..:/code
+  command: tail -F anything
+
+services:
+  php:
+    <<: *php-base
+    profiles:
+      - php
+      - all
+  php-mysql:
+    <<: *php-base
+    environment:
+      YII_MYSQL_HOST: mysql
+    profiles:
+      - mysql
+      - all
+    depends_on:
+      mysql:
+        condition: service_healthy
+  php-pgsql:
+    <<: *php-base
+    environment:
+      YII_PGSQL_HOST: pgsql
+    profiles:
+      - pgsql
+      - all
+    depends_on:
+      pgsql:
+        condition: service_healthy
+  php-mssql:
+    <<: *php-base
+    environment:
+      YII_MSSQL_HOST: mssql
+      YII_MSSQL_USER: yii
+      YII_MSSQL_PASSWORD: 'q1w2e3r4!'
+    profiles:
+      - mssql
+      - all
+    depends_on:
+      mssql:
+        condition: service_healthy
+  php-oracle:
+    <<: *php-base
+    environment:
+      YII_ORACLE_HOST: oracle
+    profiles:
+      - oracle
+      - all
+    depends_on:
+      oracle:
+        condition: service_healthy
+  mysql:
+    image: mysql:8
+    ports:
+      - "3318:3306"
+    volumes:
+      - type: tmpfs
+        target: /var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_DATABASE: mhfs-test
+      MYSQL_USER: yii
+      MYSQL_PASSWORD: 'q1w2e3r4'
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uyii" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    profiles:
+      - mysql
+      - all
+  pgsql:
+    image: postgres:16
+    ports:
+      - "5438:5432"
+    volumes:
+      - type: tmpfs
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mhfs-test
+      POSTGRES_USER: yii
+      POSTGRES_PASSWORD: 'q1w2e3r4'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U yii -d mhfs-test" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    profiles:
+      - pgsql
+      - all
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1438:1433"
+    user: root
+    volumes:
+      - ./mssql/init.sh:/tmp/init.sh
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: Y
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U yii -P "q1w2e3r4!" -Q "SELECT 1" -b -C -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 100
+      start_period: 10s
+    command: /tmp/init.sh
+    profiles:
+      - mssql
+      - all
+  oracle:
+    image: gvenzl/oracle-free:23
+    ports:
+      - "1528:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    environment:
+      ORACLE_RANDOM_PASSWORD: yes
+      ORACLE_DATABASE: mhfs_test
+      APP_USER: yii
+      APP_USER_PASSWORD: q1w2e3r4
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 100
+      start_period: 5s
+      start_interval: 5s
+    profiles:
+      - oracle
+      - all
+
+volumes:
+  oracle-data:
