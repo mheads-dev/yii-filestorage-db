@@ -26,10 +26,6 @@
 *                 export-ignore
 /config/         -export-ignore
 /config/**       -export-ignore
-/docs/           -export-ignore
-/docs/**         -export-ignore
-/examples/       -export-ignore
-/examples/**     -export-ignore
 /migrations/     -export-ignore
 /migrations/**   -export-ignore
 /src/            -export-ignore
